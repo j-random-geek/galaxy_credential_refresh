@@ -9,8 +9,9 @@ This has two effects:
 1. Any Private Automation Hub API tokens from AAP 2.6 will no longer work, and
 2. Gateway tokens, which have a finite lifetime, are now used instead.
 
-Due to Gateway tokens expiring periodically (one year by default, but some companies using
-AAP may desire to have a shorter lifespan for security reasons: see
+This code can be used to re-populate Galaxy credentials after an AAP 2.6-to-2.7 upgrade, or when
+the existing tokens expire. Due to Gateway tokens expiring periodically (one year by default,
+but some companies using AAP may desire to have a shorter lifespan for security reasons: see
 https://access.redhat.com/solutions/7111986), the Galaxy credentials within the AAP platform
 will need to be refreshed periodically to ensure that project updates won't fail.
 
