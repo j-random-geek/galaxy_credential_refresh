@@ -45,4 +45,11 @@ variables (you should use a vaulted variables file for this). Optionally, also p
 
 `ansible-playbook playbook.yml -e aap_hostname=https://aap.domain -e aap_username=admin -e aap_validate_certs=false`
 
+## Authors
+
+Richard Stevenson
+
+## License
+
+BSD 3-Clause
 
