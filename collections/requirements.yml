@@ -1,0 +1,8 @@
+---
+collections:
+  - name: ansible.platform
+    version: ">=2.7.0,<2.8.0"
+  - name: ansible.controller
+    version: ">=4.8.0,<4.9.0"
+
+...
