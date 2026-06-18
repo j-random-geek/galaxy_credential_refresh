@@ -15,8 +15,8 @@ https://access.redhat.com/solutions/7111986), the Galaxy credentials within the 
 will need to be refreshed periodically to ensure that project updates won't fail.
 
 This repository includes a playbook and a role designed to:
-a) Generate a new Gateway OAuth token with read-only scope, and 
-b) Apply it to any Galaxy credentials that point to the same AAP instance.
+- Generate a new Gateway OAuth token with read-only scope, and 
+- Apply it to any Galaxy credentials that point to the same AAP instance.
 
 This code will not update Galaxy credentials whose `url` component points to a different system
 such as Ansible Galaxy, console.redhat.com, or another AAP instance.
