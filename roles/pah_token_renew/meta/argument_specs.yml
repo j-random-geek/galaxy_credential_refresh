@@ -1,0 +1,37 @@
+---
+argument_specs:
+  main:
+    short_description: "The main entrypoint for the pah_token_renew role"
+    description:
+      - The main entrypoint for the pah_token_renew role.
+      - This role finds all Galaxy credentials that point to the current (AAP 2.7) PAH and updates the token in them to a new Gateway token.  # noqa: yaml[line-length]
+    author:
+      - Richard Stevenson
+    options:
+      aap_hostname:
+        description:
+          - The base URL of an AAP 2.7 instance. When running on AAP, this should be provided by a credential of type "Red Hat Ansible Automation Platform".  # noqa: yaml[line-length]
+        type: str
+        required: true
+
+      aap_username:
+        description:
+          - The username to use when connecting to the AAP instance. The user must be able to log into the API, find credentials, be able to pull collections, and update the Galaxy credentials within the system.  # noqa: yaml[line-length]
+        type: str
+        required: true
+
+      aap_password:
+        description:
+          - The password for the aap_username account.
+        type: str
+        required: true
+
+      aap_validate_certs:
+        description:
+          - Whether or not to validate SSL certificates.
+        type: bool
+        required: false
+        default: true
+
+
+...

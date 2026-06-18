@@ -1,0 +1,11 @@
+---
+- name: Renew Private Automation Hub credentials
+  hosts: localhost
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Invoke the pah_token_renew role
+      ansible.builtin.import_role:
+        name: pah_token_renew
+
+...

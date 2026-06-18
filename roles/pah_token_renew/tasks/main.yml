@@ -1,0 +1,43 @@
+---
+# tasks file for pah_token_renew
+
+- name: Create timestamp
+  ansible.builtin.set_fact:
+    pah_token_renew_timestamp: "{{ lookup('ansible.builtin.pipe', 'date +%Y%m%d-%H%M%S') }}"
+
+- name: Create new Gateway token
+  ansible.platform.token:
+    aap_hostname: "{{ aap_hostname }}"
+    aap_username: "{{ aap_username }}"
+    aap_password: "{{ aap_password }}"
+    aap_validate_certs: "{{ aap_validate_certs }}"
+    description: "{{ pah_token_renew_timestamp }} Token for Private Automation Hub credentials"
+    scope: "read"
+    state: present
+
+- name: Find all Galaxy credentials
+  block:
+    - name: Find all Controller credentials
+      ansible.builtin.set_fact:
+        pah_token_renew_all_credentials: "{{ query('ansible.controller.controller_api', 'credentials',
+          host=aap_hostname, username=aap_username, password=aap_password, verify_ssl=aap_validate_certs,
+          return_all=true) }}"
+
+    - name: Isolate Galaxy credentials
+      ansible.builtin.set_fact:
+        pah_token_renew_credentials: "{{ pah_token_renew_all_credentials | selectattr('kind', 'eq', 'galaxy_api_token') |
+          selectattr('inputs.url', 'match', aap_hostname) }}"
+
+    - name: DEBUG | Show credentials
+      ansible.builtin.debug:
+        var: pah_token_renew_credentials
+
+- name: Update credentials
+  ansible.builtin.include_tasks:
+    file: credential.yml
+  loop: "{{ pah_token_renew_credentials }}"
+  loop_control:
+    loop_var: __this_credential
+
+
+...

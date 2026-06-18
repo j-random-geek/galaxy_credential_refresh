@@ -1,0 +1,7 @@
+---
+# defaults file for pah_token_renew
+
+aap_validate_certs: true  # noqa: var-naming[no-role-prefix]
+
+
+...
