@@ -7,6 +7,9 @@ PAH API tokens, Gateway tokens expire after one year, by default, but some AAP u
 enforce a shorter lifespan due to cybersecurity concerns. Token expiry means that your project
 updates may fail to work, hence the requirement to update them.
 
+This role will only update Galaxy credentials where the `url` component of the credential points
+to the same AAP instance we are running against (as denoted by the `aap_hostname` variable).
+
 DO NOT run this role against AAP 2.5 or AAP 2.6, as it will update your credentials with Gateway
 OAuth2 tokens, which will not work with PAH in those versions.
 

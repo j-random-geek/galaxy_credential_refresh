@@ -20,8 +20,9 @@ This repository includes a playbook and a role designed to:
 - Generate a new Gateway OAuth token with read-only scope, and 
 - Apply it to any Galaxy credentials that point to the same AAP instance.
 
-This code will not update Galaxy credentials whose `url` component points to a different system
-such as Ansible Galaxy, console.redhat.com, or another AAP instance.
+This code will only update Galaxy credentials whose `url` component points to the `aap_hostname`
+specified in the provided credential. This prevents unintentionally updating (and invalidating)
+Galaxy credentials that point to Ansible Galaxy or console.redhat.com.
 
 ## Usage
 
