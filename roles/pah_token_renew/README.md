@@ -1,31 +1,65 @@
-Role Name
-=========
+pah_token_renew
+===============
 
-A brief description of the role goes here.
+This role automates the update of Ansible Galaxy credentials in Ansible Automation Platform 2.7 now
+that Gateway tokens are used and Private Automation Hub (PAH) API tokens no longer exist. Unlike
+PAH API tokens, Gateway tokens expire after one year, by default, but some AAP users may choose to
+enforce a shorter lifespan due to cybersecurity concerns. Token expiry means that your project
+updates may fail to work, hence the requirement to update them.
+
+DO NOT run this role against AAP 2.5 or AAP 2.6, as it will update your credentials with Gateway
+OAuth2 tokens, which will not work with PAH in those versions.
 
 Requirements
 ------------
 
-Any pre-requisites that may not be covered by Ansible itself or the role should be mentioned here. For instance, if the role uses the EC2 module, it may be a good idea to mention in this section that the boto package is required.
+To work with AAP, you must create a Job Template with a suitable Red Hat Ansible Automation
+Platform credential. You can also run this on the commandline by specifying the authentication
+variables noted below.
+
 
 Role Variables
 --------------
 
-A description of the settable variables for this role should go here, including any variables that are in defaults/main.yml, vars/main.yml, and any variables that can/should be set via parameters to the role. Any variables that are read from other roles and/or the global scope (ie. hostvars, group vars, etc.) should be mentioned here as well.
+The variables used by this role are as follows:
+
+| Variable name  | Type   | Required | Default | Description |
+|:---------------|:--  ---|:--------:|:-------:|:------------|
+| `aap_hostname` | String | Y        | -       | The base URL of the AAP 2.7 instance, e.g. `https://aap.my.domain` |
+| `aap_username` | String | Y        | -       | The username of a user with privilege to a) update Galaxy credentials, and b) read collections from PAH |
+| `aap_password` | String | Y        | -       | The password for the user specified in `aap_username` |
+| `aap_validate_certs` | Boolean | N | `true`  | Whether or not to validate SSL certificates when connecting to AAP. Set to `false` if your AAP instance uses self-signed certificates. |
+
 
 Dependencies
 ------------
 
-A list of other roles hosted on Galaxy should go here, plus any details in regards to parameters that may need to be set for other roles, or variables that are used from other roles.
+This role has the following dependencies:
+
+```
+collections:
+  - name: ansible.platform
+    version: "">=2.7.0,<2.8.0"
+  - name: ansible.controller
+    version: ">=4.8.0,<4.9.0"
+```
+
 
 Example Playbook
 ----------------
 
-Including an example of how to use your role (for instance, with variables passed in as parameters) is always nice for users too:
-
-    - hosts: servers
-      roles:
-         - { role: username.rolename, x: 42 }
+```
+---
+- name: Renew Private Automation Hub credentials
+  hosts: localhost
+  gather_facts: false
+  become: false
+  tasks:
+    - name: Invoke the pah_token_renew role
+      ansible.builtin.import_role:
+        name: pah_token_renew
+...
+```
 
 License
 -------
@@ -35,4 +69,4 @@ BSD
 Author Information
 ------------------
 
-An optional section for the role authors to include contact information, or a website (HTML is not allowed).
+Richard Stevenson

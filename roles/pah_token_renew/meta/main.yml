@@ -1,3 +1,4 @@
+---
 galaxy_info:
   author: Richard Stevenson
   description: Role to update AAP credentials pointing to Private Automation Hub

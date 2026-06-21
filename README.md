@@ -54,4 +54,3 @@ Richard Stevenson
 ## License
 
 BSD 3-Clause
-
