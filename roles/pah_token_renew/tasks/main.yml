@@ -18,10 +18,10 @@
 
 - name: Only run against AAP 2.7 or later
   when:
-    - pah_token_rename_url_output.x_api_product_name is defined
-    - pah_token_rename_url_output.x_api_product_version is defined
-    - pah_token_rename_url_output.x_api_product_name == 'AAP gateway'
-    - pah_token_rename_url_output.x_api_product_version is ansible.builtin.version('2.7.0', '>=', version_type='semver')  # noqa: yaml[line-length]
+    - pah_token_renew_url_output.x_api_product_name is defined
+    - pah_token_renew_url_output.x_api_product_version is defined
+    - pah_token_renew_url_output.x_api_product_name == 'AAP gateway'
+    - pah_token_renew_url_output.x_api_product_version is ansible.builtin.version('2.7.0', '>=', version_type='semver')  # noqa: yaml[line-length]
   block:
     - name: Create new Gateway token
       ansible.platform.token:
