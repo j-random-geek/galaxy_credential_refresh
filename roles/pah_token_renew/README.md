@@ -27,7 +27,7 @@ Role Variables
 The variables used by this role are as follows:
 
 | Variable name  | Type   | Required | Default | Description |
-|:---------------|:--  ---|:--------:|:-------:|:------------|
+|:---------------|:-------|:--------:|:-------:|:------------|
 | `aap_hostname` | String | Y        | -       | The base URL of the AAP 2.7 instance, e.g. `https://aap.my.domain` |
 | `aap_username` | String | Y        | -       | The username of a user with privilege to a) update Galaxy credentials, and b) read collections from PAH |
 | `aap_password` | String | Y        | -       | The password for the user specified in `aap_username` |
