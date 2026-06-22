@@ -5,51 +5,66 @@
   ansible.builtin.set_fact:
     pah_token_renew_timestamp: "{{ lookup('ansible.builtin.pipe', 'date +%Y%m%d-%H%M%S') }}"
 
-- name: Create new Gateway token
-  ansible.platform.token:
-    aap_hostname: "{{ aap_hostname }}"
-    aap_username: "{{ aap_username }}"
-    aap_password: "{{ aap_password }}"
-    aap_validate_certs: "{{ aap_validate_certs }}"
-    description: "{{ pah_token_renew_timestamp }} Token for Private Automation Hub credentials"
-    scope: "read"
-    state: present
-
-- name: Find all Galaxy credentials
-  block:
-    - name: Find all Controller credentials
-      ansible.builtin.set_fact:
-        pah_token_renew_all_credentials: "{{ query('ansible.controller.controller_api', 'credentials',
-          host=aap_hostname, username=aap_username, password=aap_password, verify_ssl=aap_validate_certs,
-          return_all=true) }}"
-
-    - name: Isolate Galaxy credentials
-      ansible.builtin.set_fact:
-        pah_token_renew_credentials: "{{ pah_token_renew_all_credentials | selectattr('kind', 'eq', 'galaxy_api_token') |
-          selectattr('inputs.url', 'match', aap_hostname) }}"
-
-    - name: DEBUG | Show credentials
-      ansible.builtin.debug:
-        var: pah_token_renew_credentials
-
-- name: Update credential
-  ansible.controller.credential:
-    controller_host: "{{ aap_hostname }}"
-    controller_username: "{{ aap_username }}"
-    controller_password: "{{ aap_password }}"
+- name: Get the AAP version from AAP
+  ansible.builtin.uri:
+    url: "{{ aap_hostname }}/api/"
+    method: GET
+    force: true
+    force_basic_auth: true
+    url_username: "{{ aap_username }}"
+    url_password: "{{ aap_password }}"
     validate_certs: "{{ aap_validate_certs }}"
-    request_timeout: 10.0
-    credential_type: "Ansible Galaxy/Automation Hub API Token"
-    name: "{{ __this_credential.name }}"
-    organization: "{{ __this_credential.organization | default(omit) }}"
-    team: "{{ __this_credential.team | default(omit) }}"
-    user: "{{ __this_credential.user | default(omit) }}"
-    description: "{{ __this_credential.description | default('') }}"
-    inputs:
-      url: "{{ __this_credential.inputs.url }}"
-      token: "{{ ansible_facts.aap_token.token }}"
-  loop: "{{ pah_token_renew_credentials }}"
-  loop_control:
-    loop_var: __this_credential
+  register: pah_token_renew_uri_output
+
+- name: Only run against AAP 2.7 or later
+  when:
+    - pah_token_rename_url_output.x_api_product_name is defined
+    - pah_token_rename_url_output.x_api_product_version is defined
+    - pah_token_rename_url_output.x_api_product_name == 'AAP gateway'
+    - pah_token_rename_url_output.x_api_product_version is ansible.builtin.version('2.7.0', '>=', version_type='semver')  # noqa: yaml[line-length]
+  block:
+    - name: Create new Gateway token
+      ansible.platform.token:
+        aap_hostname: "{{ aap_hostname }}"
+        aap_username: "{{ aap_username }}"
+        aap_password: "{{ aap_password }}"
+        aap_validate_certs: "{{ aap_validate_certs }}"
+        description: "{{ pah_token_renew_timestamp }} Token for Private Automation Hub credentials"
+        scope: "read"
+        state: present
+
+    - name: Find all Galaxy credentials
+      block:
+        - name: Find all Controller credentials
+          ansible.builtin.set_fact:
+            pah_token_renew_all_credentials: "{{ query('ansible.controller.controller_api', 'credentials',
+              host=aap_hostname, username=aap_username, password=aap_password, verify_ssl=aap_validate_certs,
+              return_all=true) }}"
+
+        - name: Isolate Galaxy credentials
+          ansible.builtin.set_fact:
+            pah_token_renew_credentials: "{{ pah_token_renew_all_credentials | selectattr('kind', 'eq', 'galaxy_api_token') |
+              selectattr('inputs.url', 'match', aap_hostname) }}"
+
+    - name: Update credential
+      ansible.controller.credential:
+        controller_host: "{{ aap_hostname }}"
+        controller_username: "{{ aap_username }}"
+        controller_password: "{{ aap_password }}"
+        validate_certs: "{{ aap_validate_certs }}"
+        request_timeout: 10.0
+        credential_type: "Ansible Galaxy/Automation Hub API Token"
+        name: "{{ __this_credential.name }}"
+        organization: "{{ __this_credential.organization | default(omit) }}"
+        team: "{{ __this_credential.team | default(omit) }}"
+        user: "{{ __this_credential.user | default(omit) }}"
+        description: "{{ __this_credential.description | default('') }}"
+        inputs:
+          url: "{{ __this_credential.inputs.url }}"
+          token: "{{ ansible_facts.aap_token.token }}"
+      loop: "{{ pah_token_renew_credentials }}"
+      loop_control:
+        loop_var: __this_credential
+
 
 ...

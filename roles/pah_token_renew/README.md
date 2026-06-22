@@ -10,8 +10,9 @@ updates may fail to work, hence the requirement to update them.
 This role will only update Galaxy credentials where the `url` component of the credential points
 to the same AAP instance we are running against (as denoted by the `aap_hostname` variable).
 
-DO NOT run this role against AAP 2.5 or AAP 2.6, as it will update your credentials with Gateway
-OAuth2 tokens, which will not work with PAH in those versions.
+This role will not take any action if you are using AAP 2.6 or earlier; in AAP 2.5 or 2.6, it would
+invalidate the Galaxy credentials (those versions do not use Gateway tokens for Automation Hub API
+access), and in AAP 2.4 or earlier it would simply fail.
 
 Requirements
 ------------
